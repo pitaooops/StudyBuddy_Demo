@@ -1,782 +1,1559 @@
-import React, { useState } from 'react';
-import { MessageCircle, Send, Camera, Home, Book, User, Trophy, Clock, CheckCircle, Star, ArrowRight, Mic } from 'lucide-react';
-
-const StudyBuddyApp = () => {
-  const [currentView, setCurrentView] = useState('home');
-  const [selectedSubject, setSelectedSubject] = useState('math');
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: 'ai',
-      content: "Hi Rico! I'm your Study Buddy. Got stuck on any homework? Just send it my way and I'll help you work through it step by step!",
-      timestamp: "2:30 PM"
-    }
-  ]);
-  const [inputMessage, setInputMessage] = useState('');
-
-  const handleSendMessage = () => {
-    if (inputMessage.trim()) {
-      const newMessage = {
-        id: messages.length + 1,
-        type: 'user',
-        content: inputMessage,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      
-      setMessages([...messages, newMessage]);
-      setInputMessage('');
-      
-      setTimeout(() => {
-        const aiResponse = {
-          id: messages.length + 2,
-          type: 'ai',
-          content: "Great question! Let me help you think through this step by step. What do you think might be the first step to solve this problem?",
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-        setMessages(prev => [...prev, aiResponse]);
-      }, 1500);
-    }
-  };
-
-  const showPhotoDemo = () => {
-    const demoMessages = [
-      {
-        id: 100,
-        type: 'user',
-        content: "📸 [Photo uploaded: Math problem - 3/4 + 2/8 = ?]",
-        timestamp: "2:35 PM"
-      },
-      {
-        id: 101,
-        type: 'ai',
-        content: "I can see you're working on adding fractions! Before we solve this together, what do you notice about the denominators 4 and 8?",
-        timestamp: "2:35 PM"
-      },
-      {
-        id: 102,
-        type: 'user',
-        content: "Um, 8 is bigger than 4?",
-        timestamp: "2:36 PM"
-      },
-      {
-        id: 103,
-        type: 'ai',
-        content: "Exactly! 8 is actually 4 × 2. This means we can make both fractions have the same denominator. Can you think of what 3/4 would be if we changed the denominator to 8?",
-        timestamp: "2:36 PM"
-      },
-      {
-        id: 104,
-        type: 'user',
-        content: "Maybe 6/8?",
-        timestamp: "2:37 PM"
-      },
-      {
-        id: 105,
-        type: 'ai',
-        content: "Perfect! 🎉 You got it! 3/4 = 6/8. Now you have 6/8 + 2/8. When denominators are the same, what do you do with the numerators?",
-        timestamp: "2:37 PM"
-      }
-    ];
-    setMessages(demoMessages);
-  };
-
-  // 主页组件
-  const HomePage = () => (
-    <div className="p-8 bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-4xl font-bold text-gray-800">Hi Rico! 👋</h1>
-          <p className="text-xl text-gray-600 mt-2">Ready to learn something awesome today?</p>
-        </div>
-        <div className="bg-yellow-100 px-6 py-3 rounded-2xl flex items-center space-x-3">
-          <Trophy className="w-6 h-6 text-yellow-600" />
-          <span className="font-semibold text-gray-700">Learning Streak: 12 days</span>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-3xl p-8 shadow-sm mb-8">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Today's Progress</h2>
-        <div className="grid grid-cols-4 gap-6">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <CheckCircle className="w-10 h-10 text-green-500" />
-            </div>
-            <p className="text-gray-600 mb-1">Problems Solved</p>
-            <p className="text-3xl font-bold text-gray-800">8</p>
-          </div>
-          <div className="text-center">
-            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Clock className="w-10 h-10 text-blue-500" />
-            </div>
-            <p className="text-gray-600 mb-1">Study Time</p>
-            <p className="text-3xl font-bold text-gray-800">45m</p>
-          </div>
-          <div className="text-center">
-            <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Trophy className="w-10 h-10 text-purple-500" />
-            </div>
-            <p className="text-gray-600 mb-1">Badges Earned</p>
-            <p className="text-3xl font-bold text-gray-800">12</p>
-          </div>
-          <div className="text-center">
-            <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Star className="w-10 h-10 text-orange-500" />
-            </div>
-            <p className="text-gray-600 mb-1">Accuracy</p>
-            <p className="text-3xl font-bold text-gray-800">96%</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-6 mb-8">
-        <div 
-          className="bg-white rounded-3xl p-8 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => setCurrentView('math')}
-        >
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
-            <span className="text-3xl">📐</span>
-          </div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-3">Math</h3>
-          <p className="text-gray-600 mb-4">Fractions & Decimals</p>
-          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
-            <div className="bg-red-500 h-3 rounded-full" style={{ width: '75%' }}></div>
-          </div>
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>Progress: 75%</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBuddy AI - Complete Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
-        <div className="bg-white rounded-3xl p-8 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
-            <span className="text-3xl">🔬</span>
-          </div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-3">Science</h3>
-          <p className="text-gray-600 mb-4">Solar System</p>
-          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
-            <div className="bg-green-500 h-3 rounded-full" style={{ width: '45%' }}></div>
-          </div>
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>Progress: 45%</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+        }
+        
+        .container {
+            max-width: 1152px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border-radius: 24px;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+        
+        .page-indicator {
+            background: #f3f4f6;
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* Home Page Styles */
+        .home-content {
+            padding: 32px;
+            background: linear-gradient(135deg, #ebf8ff 0%, #f3e8ff 100%);
+            min-height: 800px;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 20px;
+            color: #6b7280;
+        }
+        
+        .streak-badge {
+            background: #fef3c7;
+            padding: 12px 24px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .streak-badge span {
+            font-weight: 600;
+            color: #92400e;
+        }
+        
+        .progress-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 32px;
+        }
+        
+        .progress-card h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 24px;
+        }
+        
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        
+        .progress-item {
+            text-align: center;
+        }
+        
+        .progress-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 40px;
+        }
+        
+        .progress-icon.green { background: #d1fae5; }
+        .progress-icon.blue { background: #dbeafe; }
+        .progress-icon.purple { background: #e9d5ff; }
+        .progress-icon.orange { background: #fed7aa; }
+        
+        .progress-label {
+            color: #6b7280;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .progress-value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .subject-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+        
+        .subject-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subject-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 30px;
+        }
+        
+        .subject-icon.math { background: #fee2e2; }
+        .subject-icon.science { background: #d1fae5; }
+        .subject-icon.english { background: #dbeafe; }
+        
+        .subject-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .subject-card p {
+            color: #6b7280;
+            margin-bottom: 16px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e5e7eb;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 6px;
+        }
+        
+        .progress-fill.math { background: #ef4444; width: 75%; }
+        .progress-fill.science { background: #10b981; width: 45%; }
+        .progress-fill.english { background: #3b82f6; width: 60%; }
+        
+        .progress-text {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .action-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .action-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 24px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 24px 32px;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: #8b5cf6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7c3aed;
+        }
+        
+        /* Math Page Styles */
+        .math-content {
+            padding: 32px;
+            background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 100%);
+            min-height: 800px;
+        }
+        
+        .back-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .back-btn {
+            padding: 12px;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .knowledge-map {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 32px;
+        }
+        
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+        
+        .mastery-overview {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .mastery-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .mastery-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+        
+        .mastery-dot.red { background: #f87171; }
+        .mastery-dot.yellow { background: #fbbf24; }
+        .mastery-dot.green { background: #10b981; }
+        
+        .knowledge-network {
+            position: relative;
+            height: 320px;
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 24px;
+        }
+        
+        .network-node {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .node-1 {
+            top: 60px;
+            left: 80px;
+            width: 64px;
+            height: 64px;
+            background: #10b981;
+        }
+        
+        .node-2 {
+            top: 48px;
+            right: 96px;
+            width: 56px;
+            height: 56px;
+            background: #fbbf24;
+        }
+        
+        .node-3 {
+            bottom: 80px;
+            left: 64px;
+            width: 48px;
+            height: 48px;
+            background: #f87171;
+        }
+        
+        .node-4 {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: #3b82f6;
+            border: 4px solid #bfdbfe;
+        }
+        
+        .practice-concepts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+        
+        .practice-card, .concepts-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .problem-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .problem-tag {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .problem-tag.blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .problem-tag.orange {
+            background: #fed7aa;
+            color: #ea580c;
+        }
+        
+        .problem-equation {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        
+        .concept-item {
+            border-left: 4px solid;
+            padding-left: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .concept-item.blue {
+            border-color: #3b82f6;
+        }
+        
+        .concept-item.green {
+            border-color: #10b981;
+        }
+        
+        .concept-example {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 16px;
+        }
+        
+        .concept-example.blue {
+            background: #eff6ff;
+        }
+        
+        .concept-example.green {
+            background: #f0fdf4;
+        }
+        
+        /* Homework Page Styles */
+        .homework-content {
+            display: flex;
+            flex-direction: column;
+            height: 800px;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .chat-avatar {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            background: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .message {
+            display: flex;
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message-bubble {
+            max-width: 500px;
+            padding: 16px 24px;
+            border-radius: 24px;
+            font-size: 16px;
+        }
+        
+        .message.user .message-bubble {
+            background: #3b82f6;
+            color: white;
+            border-bottom-right-radius: 8px;
+        }
+        
+        .message.ai .message-bubble {
+            background: white;
+            color: #1f2937;
+            border-bottom-left-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message-time {
+            font-size: 12px;
+            margin-top: 8px;
+            opacity: 0.7;
+        }
+        
+        .chat-input {
+            padding: 24px;
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .input-btn {
+            padding: 16px;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .input-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 16px 24px;
+            border: 1px solid #d1d5db;
+            border-radius: 16px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .chat-input input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .send-btn {
+            padding: 16px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+        }
+        
+        /* Library Page Styles */
+        .library-content {
+            background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+            min-height: 800px;
+        }
+        
+        .library-tabs {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 32px;
+            display: flex;
+            gap: 24px;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 16px;
+            background: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn.active.math {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .tab-btn.active.science {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        .tab-btn.active.english {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        
+        .library-main {
+            padding: 32px;
+        }
+        
+        .library-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 24px;
+        }
+        
+        .stat-icon.blue { background: #dbeafe; color: #2563eb; }
+        .stat-icon.red { background: #fee2e2; color: #dc2626; }
+        .stat-icon.green { background: #d1fae5; color: #059669; }
+        .stat-icon.purple { background: #e9d5ff; color: #7c3aed; }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .mistakes-section {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mistake-item {
+            border: 1px solid #fee2e2;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .mistake-item:hover {
+            background: #fef2f2;
+        }
+        
+        .mistake-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .mistake-subject {
+            font-size: 12px;
+            color: #dc2626;
+            font-weight: 500;
+        }
+        
+        .mistake-time {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .mistake-problem {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        
+        .mistake-error {
+            font-size: 14px;
+            color: #dc2626;
+        }
+        
+        /* Profile Page Styles */
+        .profile-content {
+            padding: 32px;
+            background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 100%);
+            min-height: 800px;
+        }
+        
+        .profile-header {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 32px;
+        }
+        
+        .profile-avatar {
+            width: 96px;
+            height: 96px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 36px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .stat-number.blue { color: #2563eb; }
+        .stat-number.green { color: #059669; }
+        .stat-number.purple { color: #7c3aed; }
+        .stat-number.orange { color: #ea580c; }
+        
+        .achievements-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .achievement-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .achievement-icon.yellow { background: #fef3c7; color: #d97706; }
+        .achievement-icon.blue { background: #dbeafe; color: #2563eb; }
+        .achievement-icon.green { background: #d1fae5; color: #059669; }
+        
+        .settings-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-info h4 {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        
+        .setting-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .toggle {
+            width: 56px;
+            height: 32px;
+            border-radius: 16px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .toggle.on {
+            background: #3b82f6;
+        }
+        
+        .toggle.off {
+            background: #d1d5db;
+        }
+        
+        .toggle-handle {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 4px;
+            transition: transform 0.2s;
+        }
+        
+        .toggle.on .toggle-handle {
+            transform: translateX(24px);
+        }
+        
+        .toggle.off .toggle-handle {
+            transform: translateX(4px);
+        }
+        
+        .dropdown {
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 24px 32px;
+        }
+        
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 16px;
+            transition: all 0.2s;
+        }
+        
+        .nav-item.active {
+            color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .nav-item:not(.active) {
+            color: #9ca3af;
+        }
+        
+        .nav-item:not(.active):hover {
+            color: #6b7280;
+        }
+        
+        .nav-item svg {
+            width: 32px;
+            height: 32px;
+        }
+        
+        .nav-item span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面指示器 -->
+        <div class="page-indicator">
+            <span id="page-title">StudyBuddy AI - Home</span>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
-            <span className="text-3xl">📚</span>
-          </div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-3">English</h3>
-          <p className="text-gray-600 mb-4">Reading Comprehension</p>
-          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
-            <div className="bg-blue-500 h-3 rounded-full" style={{ width: '60%' }}></div>
-          </div>
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>Progress: 60%</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
-        </div>
-      </div>
+        <!-- Home Page -->
+        <div id="home-page" class="page active">
+            <div class="home-content">
+                <div class="header">
+                    <div>
+                        <h1>Hi Rico! 👋</h1>
+                        <p>Ready to learn something awesome today?</p>
+                    </div>
+                    <div class="streak-badge">
+                        <span>🏆</span>
+                        <span>Learning Streak: 12 days</span>
+                    </div>
+                </div>
 
-      <div className="grid grid-cols-2 gap-6">
-        <div className="bg-white rounded-3xl p-8 shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-800 mb-6">Quick Homework Help</h3>
-          <div className="space-y-4">
-            <button 
-              onClick={() => setCurrentView('homework')}
-              className="w-full bg-blue-500 text-white rounded-2xl p-6 flex items-center justify-center space-x-4 hover:bg-blue-600 transition-colors text-lg"
-            >
-              <MessageCircle className="w-6 h-6" />
-              <span>Get Homework Help</span>
-            </button>
-            <button 
-              onClick={() => {
-                showPhotoDemo();
-                setCurrentView('homework');
-              }}
-              className="w-full bg-purple-500 text-white rounded-2xl p-6 flex items-center justify-center space-x-4 hover:bg-purple-600 transition-colors text-lg"
-            >
-              <Camera className="w-6 h-6" />
-              <span>Photo Problem Solver</span>
-            </button>
-          </div>
-        </div>
+                <div class="progress-card">
+                    <h2>Today's Progress</h2>
+                    <div class="progress-grid">
+                        <div class="progress-item">
+                            <div class="progress-icon green">✓</div>
+                            <p class="progress-label">Problems Solved</p>
+                            <p class="progress-value">8</p>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-icon blue">🕐</div>
+                            <p class="progress-label">Study Time</p>
+                            <p class="progress-value">45m</p>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-icon purple">🏆</div>
+                            <p class="progress-label">Badges Earned</p>
+                            <p class="progress-value">12</p>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-icon orange">⭐</div>
+                            <p class="progress-label">Accuracy</p>
+                            <p class="progress-value">96%</p>
+                        </div>
+                    </div>
+                </div>
 
-        <div className="bg-white rounded-3xl p-8 shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-800 mb-6">Recent Activity</h3>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                <span className="text-sm">📐</span>
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-gray-800">Fraction Addition</p>
-                <p className="text-sm text-gray-600">Completed 15 minutes ago</p>
-              </div>
-              <CheckCircle className="w-5 h-5 text-green-500" />
-            </div>
-            <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-sm">🔬</span>
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-gray-800">Planet Orbits</p>
-                <p className="text-sm text-gray-600">Completed 1 hour ago</p>
-              </div>
-              <CheckCircle className="w-5 h-5 text-green-500" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+                <div class="subjects-grid">
+                    <div class="subject-card" onclick="showPage('math')">
+                        <div class="subject-icon math">📐</div>
+                        <h3>Math</h3>
+                        <p>Fractions & Decimals</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill math"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>Progress: 75%</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                    
+                    <div class="subject-card">
+                        <div class="subject-icon science">🔬</div>
+                        <h3>Science</h3>
+                        <p>Solar System</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill science"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>Progress: 45%</span>
+                            <span>→</span>
+                        </div>
+                    </div>
 
-  // 数学页面组件
-  const MathPage = () => (
-    <div className="p-8 bg-gradient-to-br from-red-50 to-orange-50 min-h-screen">
-      <div className="flex items-center space-x-4 mb-8">
-        <button 
-          onClick={() => setCurrentView('home')}
-          className="p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
-        >
-          <ArrowRight className="w-6 h-6 rotate-180" />
-        </button>
-        <div>
-          <h1 className="text-4xl font-bold text-gray-800">Mathematics</h1>
-          <p className="text-xl text-gray-600 mt-2">Grade 5 • Fractions & Decimals</p>
-        </div>
-      </div>
+                    <div class="subject-card">
+                        <div class="subject-icon english">📚</div>
+                        <h3>English</h3>
+                        <p>Reading Comprehension</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill english"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>Progress: 60%</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>
 
-      <div className="bg-white rounded-3xl p-8 shadow-sm mb-8">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Knowledge Map</h2>
-        <div className="grid grid-cols-2 gap-8">
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Mastery Overview</h3>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-4 h-4 bg-red-400 rounded-full"></div>
-                <span className="text-gray-700">Not Learned</span>
-                <span className="text-gray-500 ml-auto">65%</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-4 h-4 bg-yellow-400 rounded-full"></div>
-                <span className="text-gray-700">Partially Learned</span>
-                <span className="text-gray-500 ml-auto">22%</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                <span className="text-gray-700">Mastered</span>
-                <span className="text-gray-500 ml-auto">13%</span>
-              </div>
-            </div>
-            <button 
-              onClick={() => setCurrentView('homework')}
-              className="w-full bg-blue-500 text-white rounded-2xl p-4 mt-6 hover:bg-blue-600 transition-colors"
-            >
-              🎯 Start Targeted Practice
-            </button>
-          </div>
-          
-          <div className="relative h-80 bg-gray-50 rounded-2xl p-6">
-            <div className="text-center text-gray-500 mb-4">Interactive Knowledge Network</div>
-            <div className="absolute top-16 left-20">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
-                Basic<br/>Fractions
-              </div>
-              <div className="text-xs text-center mt-1 text-green-600 font-medium">100%</div>
-            </div>
-            <div className="absolute top-12 right-24">
-              <div className="w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
-                Adding<br/>Fractions
-              </div>
-              <div className="text-xs text-center mt-1 text-yellow-600 font-medium">60%</div>
-            </div>
-            <div className="absolute bottom-20 left-16">
-              <div className="w-12 h-12 bg-red-400 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
-                Mixed<br/>Numbers
-              </div>
-              <div className="text-xs text-center mt-1 text-red-500 font-medium">20%</div>
-            </div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-4 border-blue-200">
-                Fraction<br/>Operations
-              </div>
-              <div className="text-xs text-center mt-1 text-blue-600 font-medium">45%</div>
-            </div>
-            <div className="absolute bottom-2 right-2 text-xs text-gray-400">Click nodes to practice</div>
-          </div>
-        </div>
-      </div>
+                <div class="actions-grid">
+                    <div class="action-card">
+                        <h3>Quick Homework Help</h3>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="showPage('homework')">
+                                <span>💬</span>
+                                <span>Get Homework Help</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="showPhotoDemo()">
+                                <span>📷</span>
+                                <span>Photo Problem Solver</span>
+                            </button>
+                        </div>
+                    </div>
 
-      <div className="grid grid-cols-2 gap-8">
-        <div className="bg-white rounded-3xl p-8 shadow-sm">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-6">Practice Problems</h3>
-          <div className="space-y-6">
-            <div className="border border-gray-200 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">Problem 1</span>
-                <span className="text-sm text-gray-500">Easy</span>
-              </div>
-              <div className="text-center text-3xl font-bold text-gray-800 mb-4">½ + ¼ = ?</div>
-              <button 
-                onClick={() => setCurrentView('homework')}
-                className="w-full bg-blue-500 text-white rounded-xl p-4 hover:bg-blue-600 transition-colors"
-              >
-                Solve with StudyBuddy
-              </button>
+                    <div class="action-card">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon math">📐</div>
+                                <div class="activity-content">
+                                    <p class="activity-title">Fraction Addition</p>
+                                    <p class="activity-time">Completed 15 minutes ago</p>
+                                </div>
+                                <span style="color: #10b981;">✓</span>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon science">🔬</div>
+                                <div class="activity-content">
+                                    <p class="activity-title">Planet Orbits</p>
+                                    <p class="activity-time">Completed 1 hour ago</p>
+                                </div>
+                                <span style="color: #10b981;">✓</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="border border-gray-200 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">Problem 2</span>
-                <span className="text-sm text-gray-500">Medium</span>
-              </div>
-              <div className="text-center text-3xl font-bold text-gray-800 mb-4">⅗ + ⅖ = ?</div>
-              <button 
-                onClick={() => setCurrentView('homework')}
-                className="w-full bg-orange-500 text-white rounded-xl p-4 hover:bg-orange-600 transition-colors"
-              >
-                Solve with StudyBuddy
-              </button>
-            </div>
-          </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 shadow-sm">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-6">Key Concepts</h3>
-          <div className="space-y-6">
-            <div className="border-l-4 border-blue-500 pl-6">
-              <h4 className="font-semibold text-gray-800 mb-2">Same Denominators</h4>
-              <p className="text-gray-600">When fractions have the same bottom number, just add the top numbers!</p>
-              <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                <span className="font-mono text-lg">¼ + ¼ = 2/4 = ½</span>
-              </div>
+        <!-- Math Page -->
+        <div id="math-page" class="page">
+            <div class="math-content">
+                <div class="back-header">
+                    <button class="back-btn" onclick="showPage('home')">←</button>
+                    <div>
+                        <h1 style="font-size: 36px; font-weight: 700; color: #1f2937;">Mathematics</h1>
+                        <p style="font-size: 20px; color: #6b7280;">Grade 5 • Fractions & Decimals</p>
+                    </div>
+                </div>
+
+                <div class="knowledge-map">
+                    <h2 style="font-size: 24px; font-weight: 600; color: #1f2937; margin-bottom: 24px;">Knowledge Map</h2>
+                    <div class="knowledge-grid">
+                        <div>
+                            <h3 style="font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 16px;">Mastery Overview</h3>
+                            <div class="mastery-overview">
+                                <div class="mastery-item">
+                                    <div class="mastery-dot red"></div>
+                                    <span style="color: #374151;">Not Learned</span>
+                                    <span style="color: #6b7280; margin-left: auto;">65%</span>
+                                </div>
+                                <div class="mastery-item">
+                                    <div class="mastery-dot yellow"></div>
+                                    <span style="color: #374151;">Partially Learned</span>
+                                    <span style="color: #6b7280; margin-left: auto;">22%</span>
+                                </div>
+                                <div class="mastery-item">
+                                    <div class="mastery-dot green"></div>
+                                    <span style="color: #374151;">Mastered</span>
+                                    <span style="color: #6b7280; margin-left: auto;">13%</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="showPage('homework')" style="margin-top: 24px;">
+                                🎯 Start Targeted Practice
+                            </button>
+                        </div>
+                        
+                        <div class="knowledge-network">
+                            <div style="text-align: center; color: #6b7280; margin-bottom: 16px;">Interactive Knowledge Network</div>
+                            <div class="network-node node-1">Basic<br/>Fractions<br/><small>100%</small></div>
+                            <div class="network-node node-2">Adding<br/>Fractions<br/><small>60%</small></div>
+                            <div class="network-node node-3">Mixed<br/>Numbers<br/><small>20%</small></div>
+                            <div class="network-node node-4">Fraction<br/>Operations<br/><small>45%</small></div>
+                            <div style="position: absolute; bottom: 8px; right: 8px; font-size: 12px; color: #9ca3af;">
+                                Click nodes to practice
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-concepts">
+                    <div class="practice-card">
+                        <h3 style="font-size: 24px; font-weight: 600; color: #1f2937; margin-bottom: 24px;">Practice Problems</h3>
+                        <div class="problem-item">
+                            <div class="problem-header">
+                                <span class="problem-tag blue">Problem 1</span>
+                                <span style="font-size: 14px; color: #6b7280;">Easy</span>
+                            </div>
+                            <div class="problem-equation">½ + ¼ = ?</div>
+                            <button class="btn btn-primary" onclick="showPage('homework')">
+                                Solve with StudyBuddy
+                            </button>
+                        </div>
+                        <div class="problem-item">
+                            <div class="problem-header">
+                                <span class="problem-tag orange">Problem 2</span>
+                                <span style="font-size: 14px; color: #6b7280;">Medium</span>
+                            </div>
+                            <div class="problem-equation">⅗ + ⅖ = ?</div>
+                            <button class="btn btn-secondary" onclick="showPage('homework')">
+                                Solve with StudyBuddy
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="concepts-card">
+                        <h3 style="font-size: 24px; font-weight: 600; color: #1f2937; margin-bottom: 24px;">Key Concepts</h3>
+                        <div class="concept-item blue">
+                            <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 8px;">Same Denominators</h4>
+                            <p style="color: #6b7280;">When fractions have the same bottom number, just add the top numbers!</p>
+                            <div class="concept-example blue">¼ + ¼ = 2/4 = ½</div>
+                        </div>
+                        <div class="concept-item green">
+                            <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 8px;">Different Denominators</h4>
+                            <p style="color: #6b7280;">Find a common denominator first, then add the numerators.</p>
+                            <div class="concept-example green">½ + ¼ = 2/4 + ¼ = ¾</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="border-l-4 border-green-500 pl-6">
-              <h4 className="font-semibold text-gray-800 mb-2">Different Denominators</h4>
-              <p className="text-gray-600">Find a common denominator first, then add the numerators.</p>
-              <div className="mt-3 p-3 bg-green-50 rounded-lg">
-                <span className="font-mono text-lg">½ + ¼ = 2/4 + ¼ = ¾</span>
-              </div>
+        </div>
+
+        <!-- Homework Page -->
+        <div id="homework-page" class="page">
+            <div class="homework-content">
+                <div class="chat-header">
+                    <button class="back-btn" onclick="showPage('home')" style="background: rgba(255,255,255,0.2); color: white;">←</button>
+                    <div class="chat-avatar">🤖</div>
+                    <div>
+                        <h2 style="font-size: 20px; font-weight: 600;">StudyBuddy AI</h2>
+                        <p style="color: rgba(255,255,255,0.8);">Your homework helper</p>
+                    </div>
+                    <div style="margin-left: auto;">
+                        <button onclick="showPhotoDemo()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 16px; border-radius: 12px; cursor: pointer;">
+                            Try Photo Demo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ai">
+                        <div class="message-bubble">
+                            Hi Rico! I'm your Study Buddy. Got stuck on any homework? Just send it my way and I'll help you work through it step by step!
+                            <div class="message-time">2:30 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input">
+                    <button class="input-btn">📷</button>
+                    <button class="input-btn">🎤</button>
+                    <input type="text" id="message-input" placeholder="Ask me about your homework, upload a photo, or describe your problem..." onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  );
 
-  // 作业辅导页面组件
-  const HomeworkPage = () => (
-    <div className="flex flex-col h-screen">
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 flex items-center">
-        <button 
-          onClick={() => setCurrentView('home')}
-          className="p-2 bg-white/20 rounded-xl hover:bg-white/30 transition-colors mr-4"
-        >
-          <ArrowRight className="w-6 h-6 rotate-180" />
-        </button>
-        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mr-4">
-          <span className="text-2xl">🤖</span>
-        </div>
-        <div>
-          <h2 className="text-xl font-semibold">StudyBuddy AI</h2>
-          <p className="text-blue-100">Your homework helper</p>
-        </div>
-      </div>
+        <!-- Library Page -->
+        <div id="library-page" class="page">
+            <div class="library-content">
+                <div class="library-tabs">
+                    <button class="tab-btn active math" id="math-tab" onclick="switchSubject('math')">📐 Mathematics</button>
+                    <button class="tab-btn" id="science-tab" onclick="switchSubject('science')">🔬 Science</button>
+                    <button class="tab-btn" id="english-tab" onclick="switchSubject('english')">📚 English</button>
+                </div>
+                
+                <div class="library-main">
+                    <div style="margin-bottom: 32px;">
+                        <h1 style="font-size: 36px; font-weight: 700; color: #1f2937;" id="library-title">Mathematics Library</h1>
+                        <p style="font-size: 20px; color: #6b7280;">Review your mistakes and practice problem areas</p>
+                    </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-2xl px-6 py-4 rounded-3xl ${
-                message.type === 'user'
-                  ? 'bg-blue-500 text-white rounded-br-lg'
-                  : 'bg-white text-gray-800 rounded-bl-lg shadow-sm'
-              }`}
-            >
-              <p className="text-lg">{message.content}</p>
-              <p className={`text-sm mt-2 ${
-                message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
-              }`}>
-                {message.timestamp}
-              </p>
+                    <div class="library-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon blue">📚</div>
+                            <div class="stat-value" id="total-problems">47</div>
+                            <div class="stat-label">Total Problems</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon red">!</div>
+                            <div class="stat-value" id="need-review">5</div>
+                            <div class="stat-label">Need Review</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green">✓</div>
+                            <div class="stat-value" id="mastered">42</div>
+                            <div class="stat-label">Mastered</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">🏆</div>
+                            <div class="stat-value" id="accuracy">89%</div>
+                            <div class="stat-label">Accuracy</div>
+                        </div>
+                    </div>
+
+                    <div class="mistakes-section">
+                        <h3 style="font-size: 20px; font-weight: 600; color: #1f2937; margin-bottom: 24px;" id="mistakes-title">Recent Mistakes - Mathematics</h3>
+                        <div id="mistakes-content">
+                            <div class="mistake-item">
+                                <div class="mistake-header">
+                                    <span class="mistake-subject">Fractions</span>
+                                    <span class="mistake-time">2 days ago</span>
+                                </div>
+                                <div class="mistake-problem">¾ - ½ = ?</div>
+                                <div class="mistake-error">Common denominator error</div>
+                            </div>
+                            <div class="mistake-item">
+                                <div class="mistake-header">
+                                    <span class="mistake-subject">Decimals</span>
+                                    <span class="mistake-time">3 days ago</span>
+                                </div>
+                                <div class="mistake-problem">0.25 + 0.375 = ?</div>
+                                <div class="mistake-error">Decimal place alignment</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="p-6 border-t bg-white">
-        <div className="flex items-center space-x-4">
-          <button className="p-4 text-gray-500 hover:text-gray-700 bg-gray-100 rounded-2xl transition-colors">
-            <Camera className="w-6 h-6" />
-          </button>
-          <button className="p-4 text-gray-500 hover:text-gray-700 bg-gray-100 rounded-2xl transition-colors">
-            <Mic className="w-6 h-6" />
-          </button>
-          <div className="flex-1">
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Ask me about your homework, upload a photo, or describe your problem..."
-              className="w-full px-6 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-            />
-          </div>
-          <button 
-            onClick={handleSendMessage}
-            className="bg-blue-500 text-white p-4 rounded-2xl hover:bg-blue-600 transition-colors"
-          >
-            <Send className="w-6 h-6" />
-          </button>
         </div>
-      </div>
-    </div>
-  );
 
-  // 渲染当前页面
-  const renderCurrentView = () => {
-    switch (currentView) {
-      case 'home':
-        return <HomePage />;
-      case 'math':
-        return <MathPage />;
-      case 'homework':
-        return <HomeworkPage />;
-      case 'library':
-        return (
-          <div className="bg-gradient-to-br from-green-50 to-blue-50 min-h-screen">
-            {/* 学科切换tab */}
-            <div className="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-10">
-              <div className="flex space-x-6">
-                <button
-                  onClick={() => setSelectedSubject('math')}
-                  className={`px-6 py-3 rounded-2xl font-medium transition-colors ${
-                    selectedSubject === 'math' 
-                      ? 'bg-red-100 text-red-700' 
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  📐 Mathematics
+        <!-- Profile Page -->
+        <div id="profile-page" class="page">
+            <div class="profile-content">
+                <div class="profile-header">
+                    <div class="profile-avatar">R</div>
+                    <h2 style="font-size: 30px; font-weight: 700; color: #1f2937;">Rico Lee</h2>
+                    <p style="font-size: 20px; color: #6b7280; margin-top: 8px;">Grade 5 • Lincoln Elementary</p>
+                    <div style="margin-top: 24px;">
+                        <div class="streak-badge">
+                            <span>🏆</span>
+                            <span>Learning Streak: 12 days 🔥</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stats-card">
+                        <h3 style="font-size: 20px; font-weight: 600; color: #1f2937; margin-bottom: 16px;">Learning Stats</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number blue">847</div>
+                                <div style="font-size: 14px; color: #6b7280;">Problems Solved</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number green">96%</div>
+                                <div style="font-size: 14px; color: #6b7280;">Success Rate</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number purple">45</div>
+                                <div style="font-size: 14px; color: #6b7280;">Hours Studied</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number orange">23</div>
+                                <div style="font-size: 14px; color: #6b7280;">Badges Earned</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-card">
+                        <h3 style="font-size: 20px; font-weight: 600; color: #1f2937; margin-bottom: 16px;">Recent Achievements</h3>
+                        <div class="achievements-list">
+                            <div class="achievement-item">
+                                <div class="achievement-icon yellow">🏆</div>
+                                <div>
+                                    <p style="font-weight: 500; color: #1f2937;">Math Master</p>
+                                    <p style="font-size: 14px; color: #6b7280;">Solved 100 math problems</p>
+                                </div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon blue">⭐</div>
+                                <div>
+                                    <p style="font-weight: 500; color: #1f2937;">Quick Learner</p>
+                                    <p style="font-size: 14px; color: #6b7280;">Completed 5 topics in one day</p>
+                                </div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon green">✓</div>
+                                <div>
+                                    <p style="font-weight: 500; color: #1f2937;">Consistent Student</p>
+                                    <p style="font-size: 14px; color: #6b7280;">12-day learning streak</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h3 style="font-size: 20px; font-weight: 600; color: #1f2937; margin-bottom: 24px;">Settings</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Study Reminders</h4>
+                            <p>Get notified when it's time to practice</p>
+                        </div>
+                        <div class="toggle on">
+                            <div class="toggle-handle"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Voice Responses</h4>
+                            <p>Hear StudyBuddy speak answers aloud</p>
+                        </div>
+                        <div class="toggle off">
+                            <div class="toggle-handle"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Parent Reports</h4>
+                            <p>Send weekly progress reports to parents</p>
+                        </div>
+                        <div class="toggle on">
+                            <div class="toggle-handle"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Difficulty Level</h4>
+                            <p>Automatically adjust based on performance</p>
+                        </div>
+                        <select class="dropdown">
+                            <option>Adaptive</option>
+                            <option>Easy</option>
+                            <option>Medium</option>
+                            <option>Hard</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-grid">
+                <button class="nav-item active" onclick="showPage('home')">
+                    <span style="font-size: 32px;">🏠</span>
+                    <span>Home</span>
                 </button>
-                <button
-                  onClick={() => setSelectedSubject('science')}
-                  className={`px-6 py-3 rounded-2xl font-medium transition-colors ${
-                    selectedSubject === 'science' 
-                      ? 'bg-green-100 text-green-700' 
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  🔬 Science
+                <button class="nav-item" onclick="showPage('homework')">
+                    <span style="font-size: 32px;">💬</span>
+                    <span>Homework</span>
                 </button>
-                <button
-                  onClick={() => setSelectedSubject('english')}
-                  className={`px-6 py-3 rounded-2xl font-medium transition-colors ${
-                    selectedSubject === 'english' 
-                      ? 'bg-blue-100 text-blue-700' 
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  📚 English
+                <button class="nav-item" onclick="showPage('library')">
+                    <span style="font-size: 32px;">📚</span>
+                    <span>Library</span>
                 </button>
-              </div>
+                <button class="nav-item" onclick="showPage('profile')">
+                    <span style="font-size: 32px;">👤</span>
+                    <span>Profile</span>
+                </button>
             </div>
+        </div>
+    </div>
+
+    <script>
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
             
-            <div className="p-8">
-              <div className="mb-8">
-                <h1 className="text-4xl font-bold text-gray-800">
-                  {selectedSubject === 'math' ? 'Mathematics' : 
-                   selectedSubject === 'science' ? 'Science' : 'English'} Library
-                </h1>
-                <p className="text-xl text-gray-600 mt-2">Review your mistakes and practice problem areas</p>
-              </div>
+            // Show selected page
+            document.getElementById(pageId + '-page').classList.add('active');
+            
+            // Update page title
+            const titles = {
+                'home': 'StudyBuddy AI - Home',
+                'math': 'StudyBuddy AI - Mathematics',
+                'homework': 'StudyBuddy AI - Homework Help',
+                'library': 'StudyBuddy AI - Study Library',
+                'profile': 'StudyBuddy AI - Profile'
+            };
+            document.getElementById('page-title').textContent = titles[pageId];
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const navItems = document.querySelectorAll('.nav-item');
+            const pageIndex = {
+                'home': 0,
+                'homework': 1,
+                'library': 2,
+                'profile': 3
+            };
+            
+            if (pageIndex[pageId] !== undefined) {
+                navItems[pageIndex[pageId]].classList.add('active');
+            }
+        }
 
-              <div className="grid grid-cols-4 gap-6 mb-8">
-                <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Book className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {selectedSubject === 'math' ? '47' : selectedSubject === 'science' ? '38' : '42'}
-                  </p>
-                  <p className="text-gray-600">Total Problems</p>
-                </div>
-                <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
-                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <span className="text-red-600 font-bold text-xl">!</span>
-                  </div>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {selectedSubject === 'math' ? '5' : selectedSubject === 'science' ? '2' : '1'}
-                  </p>
-                  <p className="text-gray-600">Need Review</p>
-                </div>
-                <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <CheckCircle className="w-6 h-6 text-green-600" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {selectedSubject === 'math' ? '42' : selectedSubject === 'science' ? '36' : '41'}
-                  </p>
-                  <p className="text-gray-600">Mastered</p>
-                </div>
-                <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
-                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Trophy className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {selectedSubject === 'math' ? '89%' : selectedSubject === 'science' ? '95%' : '98%'}
-                  </p>
-                  <p className="text-gray-600">Accuracy</p>
-                </div>
-              </div>
+        // Chat functionality
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    addMessage("Great question! Let me help you think through this step by step. What do you think might be the first step to solve this problem?", 'ai');
+                }, 1500);
+            }
+        }
 
-              <div className="bg-white rounded-3xl p-8 shadow-sm">
-                <h3 className="text-xl font-semibold text-gray-800 mb-6">
-                  Recent Mistakes - {selectedSubject === 'math' ? 'Mathematics' : selectedSubject === 'science' ? 'Science' : 'English'}
-                </h3>
-                <div className="space-y-4">
-                  {selectedSubject === 'math' && (
-                    <>
-                      <div className="border border-red-200 rounded-xl p-4 hover:bg-red-50 cursor-pointer transition-colors">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-red-600 font-medium">Fractions</span>
-                          <span className="text-xs text-gray-500">2 days ago</span>
-                        </div>
-                        <p className="text-gray-800 font-medium">¾ - ½ = ?</p>
-                        <p className="text-sm text-red-600 mt-1">Common denominator error</p>
-                      </div>
-                      <div className="border border-red-200 rounded-xl p-4 hover:bg-red-50 cursor-pointer transition-colors">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-red-600 font-medium">Decimals</span>
-                          <span className="text-xs text-gray-500">3 days ago</span>
-                        </div>
-                        <p className="text-gray-800 font-medium">0.25 + 0.375 = ?</p>
-                        <p className="text-sm text-red-600 mt-1">Decimal place alignment</p>
-                      </div>
-                    </>
-                  )}
-                  
-                  {selectedSubject === 'science' && (
-                    <>
-                      <div className="border border-red-200 rounded-xl p-4 hover:bg-red-50 cursor-pointer transition-colors">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-red-600 font-medium">Solar System</span>
-                          <span className="text-xs text-gray-500">1 day ago</span>
-                        </div>
-                        <p className="text-gray-800 font-medium">Which planet is closest to the Sun?</p>
-                        <p className="text-sm text-red-600 mt-1">Confused Mercury with Venus</p>
-                      </div>
-                      <div className="border border-red-200 rounded-xl p-4 hover:bg-red-50 cursor-pointer transition-colors">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-red-600 font-medium">States of Matter</span>
-                          <span className="text-xs text-gray-500">4 days ago</span>
-                        </div>
-                        <p className="text-gray-800 font-medium">What happens when water boils?</p>
-                        <p className="text-sm text-red-600 mt-1">Missed gas formation concept</p>
-                      </div>
-                    </>
-                  )}
-                  
-                  {selectedSubject === 'english' && (
-                    <div className="border border-red-200 rounded-xl p-4 hover:bg-red-50 cursor-pointer transition-colors">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-red-600 font-medium">Reading Comprehension</span>
-                        <span className="text-xs text-gray-500">5 days ago</span>
-                      </div>
-                      <p className="text-gray-800 font-medium">Main idea identification in "The Little Prince"</p>
-                      <p className="text-sm text-red-600 mt-1">Focused on details instead of main theme</p>
-                    </div>
-                  )}
+        function addMessage(text, type) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${text}
+                    <div class="message-time">${time}</div>
                 </div>
-              </div>
-            </div>
-          </div>
-        );
-      case 'profile':
-        return (
-          <div className="p-8 bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen">
-            <div className="max-w-4xl mx-auto">
-              {/* Profile Header */}
-              <div className="bg-white rounded-3xl p-8 shadow-sm mb-8 text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-3xl text-white font-bold">R</span>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function showPhotoDemo() {
+            showPage('homework');
+            setTimeout(() => {
+                addMessage("📸 [Photo uploaded: Math problem - 3/4 + 2/8 = ?]", 'user');
+                setTimeout(() => {
+                    addMessage("I can see you're working on adding fractions! Before we solve this together, what do you notice about the denominators 4 and 8?", 'ai');
+                }, 1000);
+                setTimeout(() => {
+                    addMessage("Um, 8 is bigger than 4?", 'user');
+                }, 2000);
+                setTimeout(() => {
+                    addMessage("Exactly! 8 is actually 4 × 2. This means we can make both fractions have the same denominator. Can you think of what 3/4 would be if we changed the denominator to 8?", 'ai');
+                }, 3000);
+                setTimeout(() => {
+                    addMessage("Maybe 6/8?", 'user');
+                }, 4000);
+                setTimeout(() => {
+                    addMessage("Perfect! 🎉 You got it! 3/4 = 6/8. Now you have 6/8 + 2/8. When denominators are the same, what do you do with the numerators?", 'ai');
+                }, 5000);
+            }, 500);
+        }
+
+        // Library subject switching
+        function switchSubject(subject) {
+            // Update tab styling
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.classList.remove('active', 'math', 'science', 'english');
+            });
+            document.getElementById(subject + '-tab').classList.add('active', subject);
+            
+            // Update content
+            const data = {
+                math: {
+                    title: 'Mathematics Library',
+                    stats: { total: '47', review: '5', mastered: '42', accuracy: '89%' },
+                    mistakes: [
+                        { subject: 'Fractions', time: '2 days ago', problem: '¾ - ½ = ?', error: 'Common denominator error' },
+                        { subject: 'Decimals', time: '3 days ago', problem: '0.25 + 0.375 = ?', error: 'Decimal place alignment' }
+                    ]
+                },
+                science: {
+                    title: 'Science Library',
+                    stats: { total: '38', review: '2', mastered: '36', accuracy: '95%' },
+                    mistakes: [
+                        { subject: 'Solar System', time: '1 day ago', problem: 'Which planet is closest to the Sun?', error: 'Confused Mercury with Venus' },
+                        { subject: 'States of Matter', time: '4 days ago', problem: 'What happens when water boils?', error: 'Missed gas formation concept' }
+                    ]
+                },
+                english: {
+                    title: 'English Library',
+                    stats: { total: '42', review: '1', mastered: '41', accuracy: '98%' },
+                    mistakes: [
+                        { subject: 'Reading Comprehension', time: '5 days ago', problem: 'Main idea identification in "The Little Prince"', error: 'Focused on details instead of main theme' }
+                    ]
+                }
+            };
+            
+            const subjectData = data[subject];
+            document.getElementById('library-title').textContent = subjectData.title;
+            document.getElementById('total-problems').textContent = subjectData.stats.total;
+            document.getElementById('need-review').textContent = subjectData.stats.review;
+            document.getElementById('mastered').textContent = subjectData.stats.mastered;
+            document.getElementById('accuracy').textContent = subjectData.stats.accuracy;
+            document.getElementById('mistakes-title').textContent = `Recent Mistakes - ${subjectData.title.split(' ')[0]}`;
+            
+            // Update mistakes content
+            const mistakesContainer = document.getElementById('mistakes-content');
+            mistakesContainer.innerHTML = subjectData.mistakes.map(mistake => `
+                <div class="mistake-item">
+                    <div class="mistake-header">
+                        <span class="mistake-subject">${mistake.subject}</span>
+                        <span class="mistake-time">${mistake.time}</span>
+                    </div>
+                    <div class="mistake-problem">${mistake.problem}</div>
+                    <div class="mistake-error">${mistake.error}</div>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-800">Rico Lee</h2>
-                <p className="text-xl text-gray-600 mt-2">Grade 5 • Lincoln Elementary</p>
-                <div className="flex justify-center mt-6">
-                  <div className="bg-yellow-100 px-6 py-3 rounded-2xl flex items-center space-x-3">
-                    <Trophy className="w-6 h-6 text-yellow-600" />
-                    <span className="font-semibold text-yellow-700">Learning Streak: 12 days 🔥</span>
-                  </div>
-                </div>
-              </div>
+            `).join('');
+        }
 
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                <div className="bg-white rounded-3xl p-6 shadow-sm">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Learning Stats</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-blue-600">847</div>
-                      <div className="text-sm text-gray-600">Problems Solved</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-green-600">96%</div>
-                      <div className="text-sm text-gray-600">Success Rate</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-purple-600">45</div>
-                      <div className="text-sm text-gray-600">Hours Studied</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-orange-600">23</div>
-                      <div className="text-sm text-gray-600">Badges Earned</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-3xl p-6 shadow-sm">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Recent Achievements</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                        <Trophy className="w-6 h-6 text-yellow-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-800">Math Master</p>
-                        <p className="text-sm text-gray-600">Solved 100 math problems</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Star className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-800">Quick Learner</p>
-                        <p className="text-sm text-gray-600">Completed 5 topics in one day</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                        <CheckCircle className="w-6 h-6 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-800">Consistent Student</p>
-                        <p className="text-sm text-gray-600">12-day learning streak</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Settings */}
-              <div className="bg-white rounded-3xl p-8 shadow-sm">
-                <h3 className="text-xl font-semibold text-gray-800 mb-6">Settings</h3>
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-800">Study Reminders</p>
-                      <p className="text-sm text-gray-600">Get notified when it's time to practice</p>
-                    </div>
-                    <div className="w-14 h-8 bg-blue-500 rounded-full relative cursor-pointer">
-                      <div className="absolute right-1 top-1 w-6 h-6 bg-white rounded-full"></div>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-800">Voice Responses</p>
-                      <p className="text-sm text-gray-600">Hear StudyBuddy speak answers aloud</p>
-                    </div>
-                    <div className="w-14 h-8 bg-gray-300 rounded-full relative cursor-pointer">
-                      <div className="absolute left-1 top-1 w-6 h-6 bg-white rounded-full"></div>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-800">Parent Reports</p>
-                      <p className="text-sm text-gray-600">Send weekly progress reports to parents</p>
-                    </div>
-                    <div className="w-14 h-8 bg-blue-500 rounded-full relative cursor-pointer">
-                      <div className="absolute right-1 top-1 w-6 h-6 bg-white rounded-full"></div>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-800">Difficulty Level</p>
-                      <p className="text-sm text-gray-600">Automatically adjust based on performance</p>
-                    </div>
-                    <select className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option>Adaptive</option>
-                      <option>Easy</option>
-                      <option>Medium</option>
-                      <option>Hard</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      default:
-        return <HomePage />;
-    }
-  };
-
-  return (
-    <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
-      {/* 页面指示器 */}
-      <div className="bg-gray-100 p-3 text-center text-sm font-medium text-gray-600">
-        当前页面: {currentView === 'home' ? '主页' : currentView === 'math' ? '数学页面' : currentView === 'homework' ? '作业辅导' : currentView === 'library' ? '学习库' : '个人档案'}
-      </div>
-
-      {/* 主内容区域 */}
-      {renderCurrentView()}
-
-      {/* 底部导航 */}
-      <div className="bg-white border-t border-gray-200 px-8 py-6">
-        <div className="flex justify-around">
-          <button
-            onClick={() => setCurrentView('home')}
-            className={`flex flex-col items-center space-y-2 p-4 rounded-2xl transition-colors ${
-              currentView === 'home' ? 'text-blue-500 bg-blue-50' : 'text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            <Home className="w-8 h-8" />
-            <span className="text-sm font-medium">Home</span>
-          </button>
-          <button
-            onClick={() => setCurrentView('homework')}
-            className={`flex flex-col items-center space-y-2 p-4 rounded-2xl transition-colors ${
-              currentView === 'homework' ? 'text-blue-500 bg-blue-50' : 'text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            <MessageCircle className="w-8 h-8" />
-            <span className="text-sm">Homework</span>
-          </button>
-          <button
-            onClick={() => setCurrentView('library')}
-            className={`flex flex-col items-center space-y-2 p-4 rounded-2xl transition-colors ${
-              currentView === 'library' ? 'text-blue-500 bg-blue-50' : 'text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            <Book className="w-8 h-8" />
-            <span className="text-sm">Library</span>
-          </button>
-          <button
-            onClick={() => setCurrentView('profile')}
-            className={`flex flex-col items-center space-y-2 p-4 rounded-2xl transition-colors ${
-              currentView === 'profile' ? 'text-blue-500 bg-blue-50' : 'text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            <User className="w-8 h-8" />
-            <span className="text-sm">Profile</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default StudyBuddyApp;
+        // Toggle switches
+        document.querySelectorAll('.toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                if (this.classList.contains('on')) {
+                    this.classList.remove('on');
+                    this.classList.add('off');
+                } else {
+                    this.classList.remove('off');
+                    this.classList.add('on');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
