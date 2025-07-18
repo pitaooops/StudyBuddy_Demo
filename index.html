@@ -1,618 +1,782 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyBuddy AI - iPad Prototype</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f3f4f6;
-        }
-        
-        .container {
-            max-width: 1152px;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            border-radius: 24px;
-            overflow: hidden;
-        }
-        
-        .page-indicator {
-            background: #f3f4f6;
-            padding: 12px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 500;
-            color: #6b7280;
-        }
-        
-        .main-content {
-            padding: 32px;
-            background: linear-gradient(135deg, #ebf8ff 0%, #f3e8ff 100%);
-            min-height: 800px;
-        }
-        
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 32px;
-        }
-        
-        .header h1 {
-            font-size: 36px;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 8px;
-        }
-        
-        .header p {
-            font-size: 20px;
-            color: #6b7280;
-        }
-        
-        .streak-badge {
-            background: #fef3c7;
-            padding: 12px 24px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .streak-badge svg {
-            width: 24px;
-            height: 24px;
-            color: #d97706;
-        }
-        
-        .streak-badge span {
-            font-weight: 600;
-            color: #92400e;
-        }
-        
-        .progress-card {
-            background: white;
-            border-radius: 24px;
-            padding: 32px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 32px;
-        }
-        
-        .progress-card h2 {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 24px;
-        }
-        
-        .progress-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-        }
-        
-        .progress-item {
-            text-align: center;
-        }
-        
-        .progress-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 12px;
-        }
-        
-        .progress-icon.green {
-            background: #d1fae5;
-        }
-        
-        .progress-icon.blue {
-            background: #dbeafe;
-        }
-        
-        .progress-icon.purple {
-            background: #e9d5ff;
-        }
-        
-        .progress-icon.orange {
-            background: #fed7aa;
-        }
-        
-        .progress-icon svg {
-            width: 40px;
-            height: 40px;
-        }
-        
-        .progress-icon.green svg {
-            color: #10b981;
-        }
-        
-        .progress-icon.blue svg {
-            color: #3b82f6;
-        }
-        
-        .progress-icon.purple svg {
-            color: #8b5cf6;
-        }
-        
-        .progress-icon.orange svg {
-            color: #f59e0b;
-        }
-        
-        .progress-label {
-            color: #6b7280;
-            margin-bottom: 4px;
-            font-size: 14px;
-        }
-        
-        .progress-value {
-            font-size: 30px;
-            font-weight: 700;
-            color: #1f2937;
-        }
-        
-        .subjects-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-        
-        .subject-card {
-            background: white;
-            border-radius: 24px;
-            padding: 32px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: box-shadow 0.2s;
-        }
-        
-        .subject-card:hover {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .subject-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-            font-size: 30px;
-        }
-        
-        .subject-icon.math {
-            background: #fee2e2;
-        }
-        
-        .subject-icon.science {
-            background: #d1fae5;
-        }
-        
-        .subject-icon.english {
-            background: #dbeafe;
-        }
-        
-        .subject-card h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 12px;
-        }
-        
-        .subject-card p {
-            color: #6b7280;
-            margin-bottom: 16px;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: #e5e7eb;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            border-radius: 6px;
-        }
-        
-        .progress-fill.math {
-            background: #ef4444;
-            width: 75%;
-        }
-        
-        .progress-fill.science {
-            background: #10b981;
-            width: 45%;
-        }
-        
-        .progress-fill.english {
-            background: #3b82f6;
-            width: 60%;
-        }
-        
-        .progress-text {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #6b7280;
-        }
-        
-        .actions-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-        
-        .action-card {
-            background: white;
-            border-radius: 24px;
-            padding: 32px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .action-card h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 24px;
-        }
-        
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 24px 32px;
-            border: none;
-            border-radius: 16px;
-            font-size: 18px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #2563eb;
-        }
-        
-        .btn-secondary {
-            background: #8b5cf6;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: #7c3aed;
-        }
-        
-        .activity-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 16px;
-            background: #f9fafb;
-            border-radius: 12px;
-        }
-        
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-        
-        .activity-icon.math {
-            background: #fee2e2;
-        }
-        
-        .activity-icon.science {
-            background: #d1fae5;
-        }
-        
-        .activity-content {
-            flex: 1;
-        }
-        
-        .activity-title {
-            font-weight: 500;
-            color: #1f2937;
-            margin-bottom: 4px;
-        }
-        
-        .activity-time {
-            font-size: 14px;
-            color: #6b7280;
-        }
-        
-        .activity-check {
-            width: 20px;
-            height: 20px;
-            color: #10b981;
-        }
-        
-        .bottom-nav {
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            padding: 24px 32px;
-        }
-        
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0;
-        }
-        
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 16px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            border-radius: 16px;
-            transition: all 0.2s;
-        }
-        
-        .nav-item.active {
-            color: #3b82f6;
-            background: #eff6ff;
-        }
-        
-        .nav-item:not(.active) {
-            color: #9ca3af;
-        }
-        
-        .nav-item:not(.active):hover {
-            color: #6b7280;
-        }
-        
-        .nav-item svg {
-            width: 32px;
-            height: 32px;
-        }
-        
-        .nav-item span {
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        .arrow-icon {
-            width: 16px;
-            height: 16px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- 页面指示器 -->
-        <div class="page-indicator">
-            StudyBuddy AI - iPad Prototype
+import React, { useState } from 'react';
+import { MessageCircle, Send, Camera, Home, Book, User, Trophy, Clock, CheckCircle, Star, ArrowRight, Mic } from 'lucide-react';
+
+const StudyBuddyApp = () => {
+  const [currentView, setCurrentView] = useState('home');
+  const [selectedSubject, setSelectedSubject] = useState('math');
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      type: 'ai',
+      content: "Hi Rico! I'm your Study Buddy. Got stuck on any homework? Just send it my way and I'll help you work through it step by step!",
+      timestamp: "2:30 PM"
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+
+  const handleSendMessage = () => {
+    if (inputMessage.trim()) {
+      const newMessage = {
+        id: messages.length + 1,
+        type: 'user',
+        content: inputMessage,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      
+      setMessages([...messages, newMessage]);
+      setInputMessage('');
+      
+      setTimeout(() => {
+        const aiResponse = {
+          id: messages.length + 2,
+          type: 'ai',
+          content: "Great question! Let me help you think through this step by step. What do you think might be the first step to solve this problem?",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setMessages(prev => [...prev, aiResponse]);
+      }, 1500);
+    }
+  };
+
+  const showPhotoDemo = () => {
+    const demoMessages = [
+      {
+        id: 100,
+        type: 'user',
+        content: "📸 [Photo uploaded: Math problem - 3/4 + 2/8 = ?]",
+        timestamp: "2:35 PM"
+      },
+      {
+        id: 101,
+        type: 'ai',
+        content: "I can see you're working on adding fractions! Before we solve this together, what do you notice about the denominators 4 and 8?",
+        timestamp: "2:35 PM"
+      },
+      {
+        id: 102,
+        type: 'user',
+        content: "Um, 8 is bigger than 4?",
+        timestamp: "2:36 PM"
+      },
+      {
+        id: 103,
+        type: 'ai',
+        content: "Exactly! 8 is actually 4 × 2. This means we can make both fractions have the same denominator. Can you think of what 3/4 would be if we changed the denominator to 8?",
+        timestamp: "2:36 PM"
+      },
+      {
+        id: 104,
+        type: 'user',
+        content: "Maybe 6/8?",
+        timestamp: "2:37 PM"
+      },
+      {
+        id: 105,
+        type: 'ai',
+        content: "Perfect! 🎉 You got it! 3/4 = 6/8. Now you have 6/8 + 2/8. When denominators are the same, what do you do with the numerators?",
+        timestamp: "2:37 PM"
+      }
+    ];
+    setMessages(demoMessages);
+  };
+
+  // 主页组件
+  const HomePage = () => (
+    <div className="p-8 bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-800">Hi Rico! 👋</h1>
+          <p className="text-xl text-gray-600 mt-2">Ready to learn something awesome today?</p>
+        </div>
+        <div className="bg-yellow-100 px-6 py-3 rounded-2xl flex items-center space-x-3">
+          <Trophy className="w-6 h-6 text-yellow-600" />
+          <span className="font-semibold text-gray-700">Learning Streak: 12 days</span>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-3xl p-8 shadow-sm mb-8">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Today's Progress</h2>
+        <div className="grid grid-cols-4 gap-6">
+          <div className="text-center">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <CheckCircle className="w-10 h-10 text-green-500" />
+            </div>
+            <p className="text-gray-600 mb-1">Problems Solved</p>
+            <p className="text-3xl font-bold text-gray-800">8</p>
+          </div>
+          <div className="text-center">
+            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Clock className="w-10 h-10 text-blue-500" />
+            </div>
+            <p className="text-gray-600 mb-1">Study Time</p>
+            <p className="text-3xl font-bold text-gray-800">45m</p>
+          </div>
+          <div className="text-center">
+            <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Trophy className="w-10 h-10 text-purple-500" />
+            </div>
+            <p className="text-gray-600 mb-1">Badges Earned</p>
+            <p className="text-3xl font-bold text-gray-800">12</p>
+          </div>
+          <div className="text-center">
+            <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Star className="w-10 h-10 text-orange-500" />
+            </div>
+            <p className="text-gray-600 mb-1">Accuracy</p>
+            <p className="text-3xl font-bold text-gray-800">96%</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-6 mb-8">
+        <div 
+          className="bg-white rounded-3xl p-8 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => setCurrentView('math')}
+        >
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
+            <span className="text-3xl">📐</span>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-3">Math</h3>
+          <p className="text-gray-600 mb-4">Fractions & Decimals</p>
+          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+            <div className="bg-red-500 h-3 rounded-full" style={{ width: '75%' }}></div>
+          </div>
+          <div className="flex items-center justify-between text-sm text-gray-600">
+            <span>Progress: 75%</span>
+            <ArrowRight className="w-4 h-4" />
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-3xl p-8 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+            <span className="text-3xl">🔬</span>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-3">Science</h3>
+          <p className="text-gray-600 mb-4">Solar System</p>
+          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+            <div className="bg-green-500 h-3 rounded-full" style={{ width: '45%' }}></div>
+          </div>
+          <div className="flex items-center justify-between text-sm text-gray-600">
+            <span>Progress: 45%</span>
+            <ArrowRight className="w-4 h-4" />
+          </div>
         </div>
 
-        <!-- 主页内容 -->
-        <div class="main-content">
-            <!-- 欢迎区域 -->
-            <div class="header">
-                <div>
-                    <h1>Hi Rico! 👋</h1>
-                    <p>Ready to learn something awesome today?</p>
-                </div>
-                <div class="streak-badge">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                    </svg>
-                    <span>Learning Streak: 12 days</span>
-                </div>
-            </div>
+        <div className="bg-white rounded-3xl p-8 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+            <span className="text-3xl">📚</span>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-3">English</h3>
+          <p className="text-gray-600 mb-4">Reading Comprehension</p>
+          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+            <div className="bg-blue-500 h-3 rounded-full" style={{ width: '60%' }}></div>
+          </div>
+          <div className="flex items-center justify-between text-sm text-gray-600">
+            <span>Progress: 60%</span>
+            <ArrowRight className="w-4 h-4" />
+          </div>
+        </div>
+      </div>
 
-            <!-- 进度统计 -->
-            <div class="progress-card">
-                <h2>Today's Progress</h2>
-                <div class="progress-grid">
-                    <div class="progress-item">
-                        <div class="progress-icon green">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <p class="progress-label">Problems Solved</p>
-                        <p class="progress-value">8</p>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-icon blue">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <p class="progress-label">Study Time</p>
-                        <p class="progress-value">45m</p>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-icon purple">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                        </div>
-                        <p class="progress-label">Badges Earned</p>
-                        <p class="progress-value">12</p>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-icon orange">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                        </div>
-                        <p class="progress-label">Accuracy</p>
-                        <p class="progress-value">96%</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 学科卡片 -->
-            <div class="subjects-grid">
-                <div class="subject-card">
-                    <div class="subject-icon math">📐</div>
-                    <h3>Math</h3>
-                    <p>Fractions & Decimals</p>
-                    <div class="progress-bar">
-                        <div class="progress-fill math"></div>
-                    </div>
-                    <div class="progress-text">
-                        <span>Progress: 75%</span>
-                        <svg class="arrow-icon" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                </div>
-                
-                <div class="subject-card">
-                    <div class="subject-icon science">🔬</div>
-                    <h3>Science</h3>
-                    <p>Solar System</p>
-                    <div class="progress-bar">
-                        <div class="progress-fill science"></div>
-                    </div>
-                    <div class="progress-text">
-                        <span>Progress: 45%</span>
-                        <svg class="arrow-icon" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="subject-card">
-                    <div class="subject-icon english">📚</div>
-                    <h3>English</h3>
-                    <p>Reading Comprehension</p>
-                    <div class="progress-bar">
-                        <div class="progress-fill english"></div>
-                    </div>
-                    <div class="progress-text">
-                        <span>Progress: 60%</span>
-                        <svg class="arrow-icon" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 快速操作 -->
-            <div class="actions-grid">
-                <div class="action-card">
-                    <h3>Quick Homework Help</h3>
-                    <div class="action-buttons">
-                        <button class="btn btn-primary">
-                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Get Homework Help</span>
-                        </button>
-                        <button class="btn btn-secondary">
-                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Photo Problem Solver</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="action-card">
-                    <h3>Recent Activity</h3>
-                    <div class="activity-list">
-                        <div class="activity-item">
-                            <div class="activity-icon math">📐</div>
-                            <div class="activity-content">
-                                <p class="activity-title">Fraction Addition</p>
-                                <p class="activity-time">Completed 15 minutes ago</p>
-                            </div>
-                            <svg class="activity-check" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon science">🔬</div>
-                            <div class="activity-content">
-                                <p class="activity-title">Planet Orbits</p>
-                                <p class="activity-time">Completed 1 hour ago</p>
-                            </div>
-                            <svg class="activity-check" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div className="grid grid-cols-2 gap-6">
+        <div className="bg-white rounded-3xl p-8 shadow-sm">
+          <h3 className="text-xl font-semibold text-gray-800 mb-6">Quick Homework Help</h3>
+          <div className="space-y-4">
+            <button 
+              onClick={() => setCurrentView('homework')}
+              className="w-full bg-blue-500 text-white rounded-2xl p-6 flex items-center justify-center space-x-4 hover:bg-blue-600 transition-colors text-lg"
+            >
+              <MessageCircle className="w-6 h-6" />
+              <span>Get Homework Help</span>
+            </button>
+            <button 
+              onClick={() => {
+                showPhotoDemo();
+                setCurrentView('homework');
+              }}
+              className="w-full bg-purple-500 text-white rounded-2xl p-6 flex items-center justify-center space-x-4 hover:bg-purple-600 transition-colors text-lg"
+            >
+              <Camera className="w-6 h-6" />
+              <span>Photo Problem Solver</span>
+            </button>
+          </div>
         </div>
 
-        <!-- 底部导航 -->
-        <div class="bottom-nav">
-            <div class="nav-grid">
-                <button class="nav-item active">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                    </svg>
-                    <span>Home</span>
-                </button>
-                <button class="nav-item">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>Homework</span>
-                </button>
-                <button class="nav-item">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
-                    </svg>
-                    <span>Library</span>
-                </button>
-                <button class="nav-item">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>Profile</span>
-                </button>
+        <div className="bg-white rounded-3xl p-8 shadow-sm">
+          <h3 className="text-xl font-semibold text-gray-800 mb-6">Recent Activity</h3>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <span className="text-sm">📐</span>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-gray-800">Fraction Addition</p>
+                <p className="text-sm text-gray-600">Completed 15 minutes ago</p>
+              </div>
+              <CheckCircle className="w-5 h-5 text-green-500" />
             </div>
+            <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <span className="text-sm">🔬</span>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-gray-800">Planet Orbits</p>
+                <p className="text-sm text-gray-600">Completed 1 hour ago</p>
+              </div>
+              <CheckCircle className="w-5 h-5 text-green-500" />
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</body>
-</html>
+  );
+
+  // 数学页面组件
+  const MathPage = () => (
+    <div className="p-8 bg-gradient-to-br from-red-50 to-orange-50 min-h-screen">
+      <div className="flex items-center space-x-4 mb-8">
+        <button 
+          onClick={() => setCurrentView('home')}
+          className="p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
+        >
+          <ArrowRight className="w-6 h-6 rotate-180" />
+        </button>
+        <div>
+          <h1 className="text-4xl font-bold text-gray-800">Mathematics</h1>
+          <p className="text-xl text-gray-600 mt-2">Grade 5 • Fractions & Decimals</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-3xl p-8 shadow-sm mb-8">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Knowledge Map</h2>
+        <div className="grid grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Mastery Overview</h3>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-4 h-4 bg-red-400 rounded-full"></div>
+                <span className="text-gray-700">Not Learned</span>
+                <span className="text-gray-500 ml-auto">65%</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-4 h-4 bg-yellow-400 rounded-full"></div>
+                <span className="text-gray-700">Partially Learned</span>
+                <span className="text-gray-500 ml-auto">22%</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                <span className="text-gray-700">Mastered</span>
+                <span className="text-gray-500 ml-auto">13%</span>
+              </div>
+            </div>
+            <button 
+              onClick={() => setCurrentView('homework')}
+              className="w-full bg-blue-500 text-white rounded-2xl p-4 mt-6 hover:bg-blue-600 transition-colors"
+            >
+              🎯 Start Targeted Practice
+            </button>
+          </div>
+          
+          <div className="relative h-80 bg-gray-50 rounded-2xl p-6">
+            <div className="text-center text-gray-500 mb-4">Interactive Knowledge Network</div>
+            <div className="absolute top-16 left-20">
+              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                Basic<br/>Fractions
+              </div>
+              <div className="text-xs text-center mt-1 text-green-600 font-medium">100%</div>
+            </div>
+            <div className="absolute top-12 right-24">
+              <div className="w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                Adding<br/>Fractions
+              </div>
+              <div className="text-xs text-center mt-1 text-yellow-600 font-medium">60%</div>
+            </div>
+            <div className="absolute bottom-20 left-16">
+              <div className="w-12 h-12 bg-red-400 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                Mixed<br/>Numbers
+              </div>
+              <div className="text-xs text-center mt-1 text-red-500 font-medium">20%</div>
+            </div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-4 border-blue-200">
+                Fraction<br/>Operations
+              </div>
+              <div className="text-xs text-center mt-1 text-blue-600 font-medium">45%</div>
+            </div>
+            <div className="absolute bottom-2 right-2 text-xs text-gray-400">Click nodes to practice</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-8">
+        <div className="bg-white rounded-3xl p-8 shadow-sm">
+          <h3 className="text-2xl font-semibold text-gray-800 mb-6">Practice Problems</h3>
+          <div className="space-y-6">
+            <div className="border border-gray-200 rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">Problem 1</span>
+                <span className="text-sm text-gray-500">Easy</span>
+              </div>
+              <div className="text-center text-3xl font-bold text-gray-800 mb-4">½ + ¼ = ?</div>
+              <button 
+                onClick={() => setCurrentView('homework')}
+                className="w-full bg-blue-500 text-white rounded-xl p-4 hover:bg-blue-600 transition-colors"
+              >
+                Solve with StudyBuddy
+              </button>
+            </div>
+            <div className="border border-gray-200 rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">Problem 2</span>
+                <span className="text-sm text-gray-500">Medium</span>
+              </div>
+              <div className="text-center text-3xl font-bold text-gray-800 mb-4">⅗ + ⅖ = ?</div>
+              <button 
+                onClick={() => setCurrentView('homework')}
+                className="w-full bg-orange-500 text-white rounded-xl p-4 hover:bg-orange-600 transition-colors"
+              >
+                Solve with StudyBuddy
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl p-8 shadow-sm">
+          <h3 className="text-2xl font-semibold text-gray-800 mb-6">Key Concepts</h3>
+          <div className="space-y-6">
+            <div className="border-l-4 border-blue-500 pl-6">
+              <h4 className="font-semibold text-gray-800 mb-2">Same Denominators</h4>
+              <p className="text-gray-600">When fractions have the same bottom number, just add the top numbers!</p>
+              <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+                <span className="font-mono text-lg">¼ + ¼ = 2/4 = ½</span>
+              </div>
+            </div>
+            <div className="border-l-4 border-green-500 pl-6">
+              <h4 className="font-semibold text-gray-800 mb-2">Different Denominators</h4>
+              <p className="text-gray-600">Find a common denominator first, then add the numerators.</p>
+              <div className="mt-3 p-3 bg-green-50 rounded-lg">
+                <span className="font-mono text-lg">½ + ¼ = 2/4 + ¼ = ¾</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // 作业辅导页面组件
+  const HomeworkPage = () => (
+    <div className="flex flex-col h-screen">
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 flex items-center">
+        <button 
+          onClick={() => setCurrentView('home')}
+          className="p-2 bg-white/20 rounded-xl hover:bg-white/30 transition-colors mr-4"
+        >
+          <ArrowRight className="w-6 h-6 rotate-180" />
+        </button>
+        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mr-4">
+          <span className="text-2xl">🤖</span>
+        </div>
+        <div>
+          <h2 className="text-xl font-semibold">StudyBuddy AI</h2>
+          <p className="text-blue-100">Your homework helper</p>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50">
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-2xl px-6 py-4 rounded-3xl ${
+                message.type === 'user'
+                  ? 'bg-blue-500 text-white rounded-br-lg'
+                  : 'bg-white text-gray-800 rounded-bl-lg shadow-sm'
+              }`}
+            >
+              <p className="text-lg">{message.content}</p>
+              <p className={`text-sm mt-2 ${
+                message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
+              }`}>
+                {message.timestamp}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-6 border-t bg-white">
+        <div className="flex items-center space-x-4">
+          <button className="p-4 text-gray-500 hover:text-gray-700 bg-gray-100 rounded-2xl transition-colors">
+            <Camera className="w-6 h-6" />
+          </button>
+          <button className="p-4 text-gray-500 hover:text-gray-700 bg-gray-100 rounded-2xl transition-colors">
+            <Mic className="w-6 h-6" />
+          </button>
+          <div className="flex-1">
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              placeholder="Ask me about your homework, upload a photo, or describe your problem..."
+              className="w-full px-6 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+            />
+          </div>
+          <button 
+            onClick={handleSendMessage}
+            className="bg-blue-500 text-white p-4 rounded-2xl hover:bg-blue-600 transition-colors"
+          >
+            <Send className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // 渲染当前页面
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'home':
+        return <HomePage />;
+      case 'math':
+        return <MathPage />;
+      case 'homework':
+        return <HomeworkPage />;
+      case 'library':
+        return (
+          <div className="bg-gradient-to-br from-green-50 to-blue-50 min-h-screen">
+            {/* 学科切换tab */}
+            <div className="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-10">
+              <div className="flex space-x-6">
+                <button
+                  onClick={() => setSelectedSubject('math')}
+                  className={`px-6 py-3 rounded-2xl font-medium transition-colors ${
+                    selectedSubject === 'math' 
+                      ? 'bg-red-100 text-red-700' 
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  📐 Mathematics
+                </button>
+                <button
+                  onClick={() => setSelectedSubject('science')}
+                  className={`px-6 py-3 rounded-2xl font-medium transition-colors ${
+                    selectedSubject === 'science' 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  🔬 Science
+                </button>
+                <button
+                  onClick={() => setSelectedSubject('english')}
+                  className={`px-6 py-3 rounded-2xl font-medium transition-colors ${
+                    selectedSubject === 'english' 
+                      ? 'bg-blue-100 text-blue-700' 
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  📚 English
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-8">
+              <div className="mb-8">
+                <h1 className="text-4xl font-bold text-gray-800">
+                  {selectedSubject === 'math' ? 'Mathematics' : 
+                   selectedSubject === 'science' ? 'Science' : 'English'} Library
+                </h1>
+                <p className="text-xl text-gray-600 mt-2">Review your mistakes and practice problem areas</p>
+              </div>
+
+              <div className="grid grid-cols-4 gap-6 mb-8">
+                <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Book className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {selectedSubject === 'math' ? '47' : selectedSubject === 'science' ? '38' : '42'}
+                  </p>
+                  <p className="text-gray-600">Total Problems</p>
+                </div>
+                <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
+                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-red-600 font-bold text-xl">!</span>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {selectedSubject === 'math' ? '5' : selectedSubject === 'science' ? '2' : '1'}
+                  </p>
+                  <p className="text-gray-600">Need Review</p>
+                </div>
+                <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {selectedSubject === 'math' ? '42' : selectedSubject === 'science' ? '36' : '41'}
+                  </p>
+                  <p className="text-gray-600">Mastered</p>
+                </div>
+                <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Trophy className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {selectedSubject === 'math' ? '89%' : selectedSubject === 'science' ? '95%' : '98%'}
+                  </p>
+                  <p className="text-gray-600">Accuracy</p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl p-8 shadow-sm">
+                <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                  Recent Mistakes - {selectedSubject === 'math' ? 'Mathematics' : selectedSubject === 'science' ? 'Science' : 'English'}
+                </h3>
+                <div className="space-y-4">
+                  {selectedSubject === 'math' && (
+                    <>
+                      <div className="border border-red-200 rounded-xl p-4 hover:bg-red-50 cursor-pointer transition-colors">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-red-600 font-medium">Fractions</span>
+                          <span className="text-xs text-gray-500">2 days ago</span>
+                        </div>
+                        <p className="text-gray-800 font-medium">¾ - ½ = ?</p>
+                        <p className="text-sm text-red-600 mt-1">Common denominator error</p>
+                      </div>
+                      <div className="border border-red-200 rounded-xl p-4 hover:bg-red-50 cursor-pointer transition-colors">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-red-600 font-medium">Decimals</span>
+                          <span className="text-xs text-gray-500">3 days ago</span>
+                        </div>
+                        <p className="text-gray-800 font-medium">0.25 + 0.375 = ?</p>
+                        <p className="text-sm text-red-600 mt-1">Decimal place alignment</p>
+                      </div>
+                    </>
+                  )}
+                  
+                  {selectedSubject === 'science' && (
+                    <>
+                      <div className="border border-red-200 rounded-xl p-4 hover:bg-red-50 cursor-pointer transition-colors">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-red-600 font-medium">Solar System</span>
+                          <span className="text-xs text-gray-500">1 day ago</span>
+                        </div>
+                        <p className="text-gray-800 font-medium">Which planet is closest to the Sun?</p>
+                        <p className="text-sm text-red-600 mt-1">Confused Mercury with Venus</p>
+                      </div>
+                      <div className="border border-red-200 rounded-xl p-4 hover:bg-red-50 cursor-pointer transition-colors">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-red-600 font-medium">States of Matter</span>
+                          <span className="text-xs text-gray-500">4 days ago</span>
+                        </div>
+                        <p className="text-gray-800 font-medium">What happens when water boils?</p>
+                        <p className="text-sm text-red-600 mt-1">Missed gas formation concept</p>
+                      </div>
+                    </>
+                  )}
+                  
+                  {selectedSubject === 'english' && (
+                    <div className="border border-red-200 rounded-xl p-4 hover:bg-red-50 cursor-pointer transition-colors">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-red-600 font-medium">Reading Comprehension</span>
+                        <span className="text-xs text-gray-500">5 days ago</span>
+                      </div>
+                      <p className="text-gray-800 font-medium">Main idea identification in "The Little Prince"</p>
+                      <p className="text-sm text-red-600 mt-1">Focused on details instead of main theme</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 'profile':
+        return (
+          <div className="p-8 bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen">
+            <div className="max-w-4xl mx-auto">
+              {/* Profile Header */}
+              <div className="bg-white rounded-3xl p-8 shadow-sm mb-8 text-center">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="text-3xl text-white font-bold">R</span>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-800">Rico Lee</h2>
+                <p className="text-xl text-gray-600 mt-2">Grade 5 • Lincoln Elementary</p>
+                <div className="flex justify-center mt-6">
+                  <div className="bg-yellow-100 px-6 py-3 rounded-2xl flex items-center space-x-3">
+                    <Trophy className="w-6 h-6 text-yellow-600" />
+                    <span className="font-semibold text-yellow-700">Learning Streak: 12 days 🔥</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-6 mb-8">
+                <div className="bg-white rounded-3xl p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Learning Stats</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-blue-600">847</div>
+                      <div className="text-sm text-gray-600">Problems Solved</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-green-600">96%</div>
+                      <div className="text-sm text-gray-600">Success Rate</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-purple-600">45</div>
+                      <div className="text-sm text-gray-600">Hours Studied</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-orange-600">23</div>
+                      <div className="text-sm text-gray-600">Badges Earned</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-3xl p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Recent Achievements</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <Trophy className="w-6 h-6 text-yellow-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-800">Math Master</p>
+                        <p className="text-sm text-gray-600">Solved 100 math problems</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Star className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-800">Quick Learner</p>
+                        <p className="text-sm text-gray-600">Completed 5 topics in one day</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-6 h-6 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-800">Consistent Student</p>
+                        <p className="text-sm text-gray-600">12-day learning streak</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Settings */}
+              <div className="bg-white rounded-3xl p-8 shadow-sm">
+                <h3 className="text-xl font-semibold text-gray-800 mb-6">Settings</h3>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-800">Study Reminders</p>
+                      <p className="text-sm text-gray-600">Get notified when it's time to practice</p>
+                    </div>
+                    <div className="w-14 h-8 bg-blue-500 rounded-full relative cursor-pointer">
+                      <div className="absolute right-1 top-1 w-6 h-6 bg-white rounded-full"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-800">Voice Responses</p>
+                      <p className="text-sm text-gray-600">Hear StudyBuddy speak answers aloud</p>
+                    </div>
+                    <div className="w-14 h-8 bg-gray-300 rounded-full relative cursor-pointer">
+                      <div className="absolute left-1 top-1 w-6 h-6 bg-white rounded-full"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-800">Parent Reports</p>
+                      <p className="text-sm text-gray-600">Send weekly progress reports to parents</p>
+                    </div>
+                    <div className="w-14 h-8 bg-blue-500 rounded-full relative cursor-pointer">
+                      <div className="absolute right-1 top-1 w-6 h-6 bg-white rounded-full"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-800">Difficulty Level</p>
+                      <p className="text-sm text-gray-600">Automatically adjust based on performance</p>
+                    </div>
+                    <select className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                      <option>Adaptive</option>
+                      <option>Easy</option>
+                      <option>Medium</option>
+                      <option>Hard</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return <HomePage />;
+    }
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
+      {/* 页面指示器 */}
+      <div className="bg-gray-100 p-3 text-center text-sm font-medium text-gray-600">
+        当前页面: {currentView === 'home' ? '主页' : currentView === 'math' ? '数学页面' : currentView === 'homework' ? '作业辅导' : currentView === 'library' ? '学习库' : '个人档案'}
+      </div>
+
+      {/* 主内容区域 */}
+      {renderCurrentView()}
+
+      {/* 底部导航 */}
+      <div className="bg-white border-t border-gray-200 px-8 py-6">
+        <div className="flex justify-around">
+          <button
+            onClick={() => setCurrentView('home')}
+            className={`flex flex-col items-center space-y-2 p-4 rounded-2xl transition-colors ${
+              currentView === 'home' ? 'text-blue-500 bg-blue-50' : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <Home className="w-8 h-8" />
+            <span className="text-sm font-medium">Home</span>
+          </button>
+          <button
+            onClick={() => setCurrentView('homework')}
+            className={`flex flex-col items-center space-y-2 p-4 rounded-2xl transition-colors ${
+              currentView === 'homework' ? 'text-blue-500 bg-blue-50' : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <MessageCircle className="w-8 h-8" />
+            <span className="text-sm">Homework</span>
+          </button>
+          <button
+            onClick={() => setCurrentView('library')}
+            className={`flex flex-col items-center space-y-2 p-4 rounded-2xl transition-colors ${
+              currentView === 'library' ? 'text-blue-500 bg-blue-50' : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <Book className="w-8 h-8" />
+            <span className="text-sm">Library</span>
+          </button>
+          <button
+            onClick={() => setCurrentView('profile')}
+            className={`flex flex-col items-center space-y-2 p-4 rounded-2xl transition-colors ${
+              currentView === 'profile' ? 'text-blue-500 bg-blue-50' : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <User className="w-8 h-8" />
+            <span className="text-sm">Profile</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default StudyBuddyApp;
